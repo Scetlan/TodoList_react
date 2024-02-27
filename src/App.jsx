@@ -2,7 +2,7 @@ import './style.css';
 import Header from './Components/Header/Header';
 import BlogFooter from './Components/FooterBlog/FooterBlog';
 import TodoList from './Components/TodoList/TodoList';
-import createdData from './utils/renderData';
+import { formatDistanceToNow } from 'date-fns';
 import { v4 } from 'uuid';
 import onFilterTasks from './utils/filterTasks';
 
@@ -32,25 +32,34 @@ class App extends React.Component {
 
   addItem = value => {
     const newItem = {
-      label: value,
+      label: value.trim(),
       id: v4(),
-      time: createdData(new Date()),
+      timeCreation: new Date(),
       done: false,
       isEditing: false,
+      time: '',
     };
+
+    const intervalId = setInterval(() => {
+      this.setState(({ tasks }) => ({
+        tasks: tasks.map(task => ({ ...task, time: formatDistanceToNow(task.timeCreation, { addSuffix: true }) })),
+      }));
+    }, 5000);
 
     this.setState(({ tasks }) => {
       const newTasks = [...tasks, newItem];
       return {
         tasks: newTasks,
+        intervalId: intervalId,
       };
     });
   };
 
+  onDate = () => {};
+
   onToggleDone = id => {
     this.setState(({ tasks }) => {
       const newArray = tasks.map(task => (task.id === id ? { ...task, done: !task.done } : task));
-
       return {
         tasks: newArray,
       };

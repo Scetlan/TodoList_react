@@ -43,6 +43,10 @@
   },
   "lint-staged": {
     "*.{js,jsx}": "npx eslint",
+    "**/*.{js,jsx}": [
+      "npm run lint",
+      "prettier --write"
+    ],
     "*.{js,jsx,html,css}": "npx prettier --check"
   }
 }

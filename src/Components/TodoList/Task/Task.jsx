@@ -7,12 +7,11 @@ export default function Task({ time, done, label, onDeleted, onToggleDone, onTog
       {isEditing ? (
         <label>
           <input className="change-task" type="text" value={label} />
-          <span className="created">{time}</span>
         </label>
       ) : (
         <label>
           <span className={addClass(done)}>{label}</span>
-          <span className="created">{time}</span>
+          <span className="created">created {time}</span>
         </label>
       )}
       <button type="button" className="icon icon-edit" onClick={onToggleEdit} aria-label="Edit" />
