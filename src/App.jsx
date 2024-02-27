@@ -48,7 +48,6 @@ class App extends React.Component {
 
     this.setState(({ tasks }) => ({
       tasks: [...tasks, newItem],
-      // intervalId: intervalId,
     }));
   };
 
