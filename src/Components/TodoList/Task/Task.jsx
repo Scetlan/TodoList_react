@@ -1,40 +1,31 @@
-import React, { Component } from 'react';
+import addClass from '../../../utils/addClassDescription';
 
-export default class Task extends Component {
-  addClass = (state) => {
-    switch (state) {
-      case true:
-        return 'description';
-      case false:
-        return;
-    }
-  };
-
-  render() {
-    const { time, done, label, onDeleted, onToggleDone, onToggleEdit, isEditing } = this.props;
-    return (
-      <div className="view">
-        <input className="toggle" type="checkbox" onChange={onToggleDone} />
-        {isEditing ? (
-          <label>
-            <input className='change-task' type="text" value={label}/>
-            <span className="created">{time}</span>
-          </label>
-        ) : (
-          <>
-            <label>
-              <span className={this.addClass(done)}>{label}</span>
-              <span className="created">{time}</span>
-            </label>
-          </>
-        )}
-        {/* <label>
-          <span className={this.addClass(done)}>{label}</span>
+export default function Task({ time, done, label, onDeleted, onToggleDone, onToggleEdit, isEditing }) {
+  return (
+    <div className="view">
+      <input className="toggle" type="checkbox" onChange={onToggleDone} />
+      {isEditing ? (
+        <label>
+          <input className="change-task" type="text" value={label} />
           <span className="created">{time}</span>
-        </label> */}
-        <button className="icon icon-edit" onClick={onToggleEdit}></button>
-        <button className="icon icon-destroy" onClick={onDeleted}></button>
-      </div>
-    );
-  }
+        </label>
+      ) : (
+        <label>
+          <span className={addClass(done)}>{label}</span>
+          <span className="created">{time}</span>
+        </label>
+      )}
+      <button type="button" className="icon icon-edit" onClick={onToggleEdit} aria-label="Edit" />
+      <button type="button" className="icon icon-destroy" onClick={onDeleted} aria-label="Delete" />
+    </div>
+  );
 }
+
+Task.defaultProps = {
+  time: '',
+  done: false,
+  label: '',
+  onToggleDone: () => {},
+  onDeleted: () => {},
+  onToggleEdit: () => {},
+};

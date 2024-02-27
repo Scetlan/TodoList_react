@@ -1,14 +1,15 @@
-import React, { Component } from 'react';
-import { createRoot } from 'react-dom/client';
-import { uuid } from 'react-uuid';
-
 import './style.css';
-import { Header } from './Components/Header/Header';
+import Header from './Components/Header/Header';
 import BlogFooter from './Components/FooterBlog/FooterBlog';
 import TodoList from './Components/TodoList/TodoList';
 import createdData from './utils/renderData';
+import { v4 } from 'uuid';
+import onFilterTasks from './utils/filterTasks';
 
-class App extends Component {
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+
+class App extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -17,44 +18,23 @@ class App extends Component {
     };
   }
 
-  onFilterChange = (filter) => {
+  onFilterChange = filter => {
     this.setState({
-      filter
-    })
-  };
-
-  Filter = (tasks, filter) => {
-    switch (filter) {
-      case 'All':
-        return tasks;
-      case 'Active':
-        return tasks.filter((task) => !task.done);
-      case 'Completed':
-        return tasks.filter((task) => task.done);
-      default:
-        return tasks;
-    }
-  };
-
-  deleteItem = (id) => {
-    this.setState(({ tasks }) => {
-      return {
-        tasks: tasks.filter((element) => element.id !== id),
-      };
+      filter,
     });
   };
 
-  idx = 10;
-  addId = (id) => {
-    this.idx = id + 1;
-    return this.idx;
+  deleteItem = id => {
+    this.setState(({ tasks }) => ({
+      tasks: tasks.filter(element => element.id !== id),
+    }));
   };
 
-  addItem = (value) => {
+  addItem = value => {
     const newItem = {
       label: value,
-      id: this.addId(this.idx),
-      time: createdData(),
+      id: v4(),
+      time: createdData(new Date()),
       done: false,
       isEditing: false,
     };
@@ -67,9 +47,9 @@ class App extends Component {
     });
   };
 
-  onToggleDone = (id) => {
+  onToggleDone = id => {
     this.setState(({ tasks }) => {
-      const newArray = tasks.map((task) => (task.id === id ? { ...task, done: !task.done } : task));
+      const newArray = tasks.map(task => (task.id === id ? { ...task, done: !task.done } : task));
 
       return {
         tasks: newArray,
@@ -77,9 +57,9 @@ class App extends Component {
     });
   };
 
-  onToggleEdit = (id) => {
+  onToggleEdit = id => {
     this.setState(({ tasks }) => {
-      const newArray = tasks.map((task) => (task.id === id ? { ...task, isEditing: !task.isEditing } : task));
+      const newArray = tasks.map(task => (task.id === id ? { ...task, isEditing: !task.isEditing } : task));
 
       return {
         tasks: newArray,
@@ -93,15 +73,17 @@ class App extends Component {
     });
   };
 
+  data = new Date();
+
   render() {
     const { tasks, filter } = this.state;
-    const visibleTasks = this.Filter(tasks, filter);
+    const visibleTasks = onFilterTasks(tasks, filter);
     return (
       <>
         <Header addItem={this.addItem} />
         <section className="main">
           <TodoList
-            tasks={this.state.tasks}
+            tasks={visibleTasks}
             onDeleted={this.deleteItem}
             onToggleDone={this.onToggleDone}
             onToggleEdit={this.onToggleEdit}
@@ -109,7 +91,7 @@ class App extends Component {
           <BlogFooter
             tasks={tasks}
             clearTask={this.clearCompleted}
-            filter={filter}
+            filterTasks={filter}
             onFilterChange={this.onFilterChange}
           />
         </section>

@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export default class NewTaskForm extends Component {
+export default class NewTaskForm extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -8,26 +8,34 @@ export default class NewTaskForm extends Component {
     };
   }
 
-  onTaskChande = (e) => {
+  onTaskChande = e => {
     this.setState({
       label: e.target.value,
     });
   };
 
-  onSubmit = (e) => {
+  onSubmit = e => {
     e.preventDefault();
-    this.props.addItem(this.state.label);
+    const { label } = this.state;
+    const { addItem } = this.props;
+    addItem(label);
     this.setState({
       label: '',
     });
-  }
+  };
 
   render() {
     const { placeholder, className } = this.props;
+    const { label } = this.state;
     return (
-      <form className='form-input' onSubmit={this.onSubmit}>
-        <input className={className} placeholder={placeholder} autoFocus onChange={this.onTaskChande} value={this.state.label}/>
+      <form className="form-input" onSubmit={this.onSubmit}>
+        <input className={className} placeholder={placeholder} onChange={this.onTaskChande} value={label} />
       </form>
     );
   }
 }
+
+NewTaskForm.defaultProps = {
+  addItem: () => {},
+  placeholder: '',
+};

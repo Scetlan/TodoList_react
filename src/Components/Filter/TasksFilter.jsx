@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export default class TasksFilter extends Component {
+export default class TasksFilter extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -21,10 +21,17 @@ export default class TasksFilter extends Component {
       const addClass = isActive ? 'selected' : '';
       return (
         <li key={name}>
-          <button className={addClass} onClick={() => onFilterChange(name)}>{text}</button>
+          <button type="button" className={addClass} onClick={() => onFilterChange(name)}>
+            {text}
+          </button>
         </li>
       );
     });
     return <ul className="filters">{newButtons}</ul>;
   }
 }
+
+TasksFilter.defaultProps = {
+  onFilterChange: () => {},
+  filter: 'all',
+};

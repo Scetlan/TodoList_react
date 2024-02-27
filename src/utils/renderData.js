@@ -1,8 +1,7 @@
 import { formatDistanceToNow } from 'date-fns';
 
-function createdData() {
-  const taskCreatedAt = new Date();
-  const formattedTimeAgo = formatDistanceToNow(taskCreatedAt, { addSuffix: true });
+function createdData(date) {
+  const formattedTimeAgo = formatDistanceToNow(date, { includeSeconds: true });
   return `created ${formattedTimeAgo} seconds ago`;
 }
 
