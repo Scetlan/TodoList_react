@@ -18,6 +18,62 @@ class App extends React.Component {
     };
   }
 
+  stopTimer = id => {
+    this.setState(prevState => ({
+      tasks: prevState.tasks.map(prevTask => {
+        if (prevTask.id === id && prevTask.timer.timerRunning) {
+          clearInterval(prevTask.timer.intervalId);
+          return {
+            ...prevTask,
+            timer: {
+              ...prevTask.timer,
+              timerRunning: false,
+              lastStoppedMin: prevTask.timer.min,
+              lastStoppedSec: prevTask.timer.sec,
+            },
+          };
+        }
+        return prevTask;
+      }),
+    }));
+  };
+
+  startTimer = id => {
+    this.setState(({ tasks }) => {
+      const newArray = tasks.map(task => {
+        if (task.id === id && !task.timer.timerRunning) {
+          let { min, sec } = task.timer;
+          task.timer.intervalId = setInterval(() => {
+            if (sec > 0) {
+              sec -= 1;
+            } else if (min > 0) {
+              sec = 59;
+              min -= 1;
+            } else {
+              clearInterval(task.timer.intervalId);
+              return;
+            }
+            this.setState(prevState => ({
+              tasks: prevState.tasks.map(prevTask =>
+                prevTask.id === id ? { ...prevTask, timer: { ...prevTask.timer, sec, min } } : prevTask
+              ),
+            }));
+          }, 1000);
+          return {
+            ...task,
+            timer: {
+              ...task.timer,
+              timerRunning: true,
+              intervalId: task.timer.intervalId,
+            },
+          };
+        }
+        return task;
+      });
+      return { tasks: newArray };
+    });
+  };
+
   onFilterChange = filter => {
     this.setState({
       filter,
@@ -30,25 +86,44 @@ class App extends React.Component {
     }));
   };
 
-  addItem = value => {
+  addItem = (label, minutes, seconds) => {
+    const currentDate = new Date();
     const newItem = {
-      label: value.trim(),
+      label: label,
       id: v4(),
-      timeCreation: new Date(),
+      timer: {
+        timerRunning: false,
+        min: minutes,
+        sec: seconds,
+      },
+      timeCreation: currentDate,
       done: false,
       isEditing: false,
-      time: 'created less than a minute ago',
+      time: 'created just',
     };
 
     setInterval(() => {
-      this.setState(({ tasks }) => ({
-        tasks: tasks.map(task => ({ ...task, time: `created ${formatDistanceToNow(task.timeCreation, { addSuffix: true })}` })),
+      this.setState(prevState => ({
+        tasks: prevState.tasks.map(prevTask => ({
+          ...prevTask,
+          time: 'created ' + formatDistanceToNow(prevTask.timeCreation, { addSuffix: true, includeSeconds: true }),
+        })),
       }));
     }, 5000);
 
     this.setState(({ tasks }) => ({
       tasks: [...tasks, newItem],
     }));
+  };
+
+  updateItem = (id, value) => {
+    this.setState(({ tasks }) => {
+      const data = [...tasks];
+      let newArray = data.map(task => (task.id === id ? { ...task, label: value, isEditing: false } : task));
+      return {
+        tasks: newArray,
+      };
+    });
   };
 
   onToggleDone = id => {
@@ -79,15 +154,20 @@ class App extends React.Component {
   render() {
     const { tasks, filter } = this.state;
     const visibleTasks = onFilterTasks(tasks, filter);
+
     return (
       <>
         <Header addItem={this.addItem} />
         <section className="main">
           <TodoList
+            addItem={this.addItem}
+            updateItem={this.updateItem}
             tasks={visibleTasks}
             onDeleted={this.deleteItem}
             onToggleDone={this.onToggleDone}
             onToggleEdit={this.onToggleEdit}
+            startTimer={this.startTimer}
+            stopTimer={this.stopTimer}
           />
           <BlogFooter
             tasks={tasks}
