@@ -11,7 +11,8 @@ Currently, two official plugins are available:
 
 
 #Link: 
-todo-list-react-git-tasktimer-svetlanas-projects-5ba9dab2.vercel.app
+https://todo-list-react-git-tasktimer-svetlanas-projects-5ba9dab2.vercel.app
+https://todo-list-react-git-tasktimer-svetlanas-projects-5ba9dab2.vercel.app?_vercel_share=oczR5nhE4R9nc8zwJPtlKrm7xHBbe7Y1
 
 Start:
 
