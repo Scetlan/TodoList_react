@@ -7,7 +7,7 @@ export default function BlogFooter({ tasks, clearTask, filterTasks, onFilterChan
     <footer className="footer">
       <span className="todo-count">{doneCount} items left</span>
       <TasksFilter filter={filterTasks} onFilterChange={onFilterChange} />
-      <button type="button" className="clear-completed" onClick={clearTask}>
+      <button type="button" className="clear-completed" onClick={() => clearTask(tasks)}>
         Clear completed
       </button>
     </footer>

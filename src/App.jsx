@@ -145,9 +145,10 @@ class App extends React.Component {
     });
   };
 
-  clearCompleted = () => {
+  clearCompleted = (tasks) => {
+    const newTasks = tasks.filter(task => !task.done);
     this.setState({
-      tasks: [],
+      tasks: newTasks,
     });
   };
 
